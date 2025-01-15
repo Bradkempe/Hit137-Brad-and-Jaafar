@@ -1,123 +1,195 @@
+#------------------------------------------------QUESTION 1-------------------------------------------------------------------------
+
 import os
 
-# Helper function to convert a character to a number between 0-51
-def char_to_num(c):
-    if 'a' <= c <= 'z':  # Lowercase letters
-        return ord(c) - ord('a')
-    elif 'A' <= c <= 'Z':  # Uppercase letters
-        return ord(c) - ord('A') + 26
-    return -1  # Non-alphabet characters
+def encrypt_char(c, n, m):
+    shift = (n * m) % 26  
+    if 'a' <= c <= 'z':  
+        return chr(((ord(c) - ord('a') + shift) % 26) + ord('a'))
+    elif 'A' <= c <= 'Z':  
+        return chr(((ord(c) - ord('A') + shift) % 26) + ord('A'))
+    else:
+        return c  
 
-# Helper function to convert a number back to a character
-def num_to_char(num):
-    if 0 <= num <= 25:  # Lowercase letters
-        return chr(num + ord('a'))
-    elif 26 <= num <= 51:  # Uppercase letters
-        return chr(num - 26 + ord('A'))
-    return chr(num)  # Non-alphabet characters (if any)
-
-# Function to encrypt text
-def encrypt_text(text, n, m):
-    encrypted_text = []
-
-    for char in text:
-        num = char_to_num(char)
-
-        if num == -1:
-            encrypted_text.append(char)  # Non-alphabet characters remain unchanged
-        else:
-            # Encrypt based on the character's number and predefined ranges
-            if 0 <= num <= 12:  # Lowercase a-m shifted forward by n * m
-                num = (num + (n * m)) % 26  # Wrap around if it exceeds 'z'
-            elif 13 <= num <= 25:  # Lowercase n-z shifted backward by n + m
-                num = (num - (n + m)) % 26  # Wrap around if it goes below 'a'
-            elif 26 <= num <= 38:  # Uppercase A-M shifted forward by n
-                num = (num + n) % 26 + 26  # Wrap around if it exceeds 'Z'
-            elif 39 <= num <= 51:  # Uppercase N-Z shifted forward by m^2
-                num = (num + (m ** 2)) % 26 + 26  # Wrap around if it exceeds 'Z'
-
-            encrypted_text.append(num_to_char(num))
-
-    return ''.join(encrypted_text)
-
-# Function to decrypt text
-def decrypt_text(encrypted_text, n, m):
-    decrypted_text = []
-
-    for char in encrypted_text:
-        num = char_to_num(char)
-
-        if num == -1:
-            decrypted_text.append(char)  # Non-alphabet characters remain unchanged
-        else:
-            # Decrypt based on the character's number and predefined ranges
-            if 0 <= num <= 12:  # Lowercase a-m shifted forward by n * m
-                # Reverse the shift applied to a-m range (move backward by (n * m))
-                num = (num - (n * m)) % 26  # Wrap around if it goes below 'a'
-                if num < 0:
-                    num += 26  # Ensure non-negative values
-            elif 13 <= num <= 25:  # Lowercase n-z shifted backward by n + m
-                # Reverse the shift applied to n-z range (move forward by (n + m))
-                num = (num + (n + m)) % 26  # Wrap around if it exceeds 'z'
-            elif 26 <= num <= 38:  # Uppercase A-M shifted forward by n
-                # Reverse the shift applied to A-M range (move backward by n)
-                num = (num - n) % 26 + 26  # Wrap around if it goes below 'A'
-            elif 39 <= num <= 51:  # Uppercase N-Z shifted forward by m^2
-                # Reverse the shift applied to N-Z range (move backward by m^2)
-                num = (num - (m ** 2)) % 26 + 26  # Wrap around if it goes below 'A'
-
-            decrypted_text.append(num_to_char(num))
-
-    return ''.join(decrypted_text)
+def decrypt_char(c, n, m):
+    shift = (n * m) % 26  
+    if 'a' <= c <= 'z':  
+        return chr(((ord(c) - ord('a') - shift + 26) % 26) + ord('a'))
+    elif 'A' <= c <= 'Z':  
+        return chr(((ord(c) - ord('A') - shift + 26) % 26) + ord('A'))
+    else:
+        return c  
 
 def main():
-    # Get the directory where the .py file is located
-    script_directory = os.path.dirname(os.path.abspath(__file__))
-    raw_text_file_path = os.path.join(script_directory, 'raw_text.txt')
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    raw_text_path = os.path.join(script_dir, "raw_text.txt")
+    encrypted_text_path = os.path.join(script_dir, "encrypted_text.txt")
 
-    # Check if the file exists in the same directory as the script
-    if not os.path.exists(raw_text_file_path):
-        print(f"Error: 'raw_text.txt' file not found in {script_directory}!")
+    if not os.path.exists(raw_text_path):
+        with open(raw_text_path, "w", encoding="utf-8") as file:
+            file.write("Hello, World! This is a test.")
+
+    try:
+        with open(raw_text_path, "r", encoding="utf-8") as file:
+            raw_text = file.read()
+    except FileNotFoundError:
+        print(f"File not found: {raw_text_path}")
         return
 
-    # Open the raw text file
-    with open(raw_text_file_path, 'r') as file:
-        raw_text = file.read()
+    try:
+        n = int(input("Enter a value for n: "))
+        m = int(input("Enter a value for m: "))
+    except ValueError:
+        print("Please enter valid numbers for n and m.")
+        return
 
-    print("Found 'raw_text.txt' at:", raw_text_file_path)
+    encrypted_text = ''.join(encrypt_char(c, n, m) for c in raw_text)
 
-    # Display the original text
-    print("Original Text:\n", raw_text)
+    with open(encrypted_text_path, "w", encoding="utf-8") as file:
+        file.write(encrypted_text)
 
-    # Get the encryption parameters from the user
-    n = int(input("Enter value of n: "))
-    m = int(input("Enter value of m: "))
+    decrypted_text = ''.join(decrypt_char(c, n, m) for c in encrypted_text)
 
-    # Encrypt the text
-    encrypted_text = encrypt_text(raw_text, n, m)
-    print("\nEncrypted Text:\n", encrypted_text)
+    print("\n---Original Text---\n", raw_text)
+    print("\n---Encrypted Text---\n", encrypted_text)
+    print("\n---Decrypted Text---\n", decrypted_text)
 
-    # Save encrypted text to a new file
-    with open('encrypted_text.txt', 'w') as encrypted_file:
-        encrypted_file.write(encrypted_text)
-    print("\nEncrypted text saved to 'encrypted_text.txt'")
-
-    # Decrypt the text
-    decrypted_text = decrypt_text(encrypted_text, n, m)
-    print("\nDecrypted Text:\n", decrypted_text)
-
-    # Check for discrepancies in decryption
-    discrepancies = 0
-    for i in range(min(len(raw_text), len(decrypted_text))):
-        if raw_text[i] != decrypted_text[i]:
-            discrepancies += 1
-            print(f"Discrepancy at index {i}: Expected '{raw_text[i]}', but got '{decrypted_text[i]}'")
-
-    if discrepancies == 0:
-        print("\nDecryption successful, no discrepancies found!")
+    if raw_text == decrypted_text:
+        print("\nDecryption successful. The original text was restored.")
     else:
-        print(f"\nDecryption failed with {discrepancies} discrepancies.")
+        print("\nDecryption failed. The text doesn't match the original.")
 
-# Run the main function
+    print("\nQuestion 1 completed.")
+
+if __name__ == "__main__":
+    main()
+
+#-----------------------------------------------------------------------------QUESTION 2-----------------------------------------------------------------------------------------
+
+import csv
+
+month_mapping = {
+    "January": 1, "February": 2, "March": 3, "April": 4, "May": 5, "June": 6,
+    "July": 7, "August": 8, "September": 9, "October": 10, "November": 11, "December": 12
+}
+
+def read_csv_files(directory):
+    data = {}
+    
+    if not os.path.isdir(directory):
+        print(f"Directory {directory} does not exist.")
+        return None
+    
+    for filename in os.listdir(directory):
+        if filename.endswith(".csv"):
+            file_path = os.path.join(directory, filename)
+            with open(file_path, 'r') as file:
+                reader = csv.reader(file)
+                header = next(reader) 
+                months = header[4:]
+
+                for row in reader:
+                    station_id = row[0]
+                    temperatures = row[4:]
+
+                    if station_id not in data:
+                        data[station_id] = {month_mapping[month.strip().title()]: [] for month in months}
+
+                    for month, temp in zip(months, temperatures):
+                        try:
+                            month = month.strip().title()
+                            if temp.strip():
+                                data[station_id][month_mapping[month]].append(float(temp))
+                        except ValueError:
+                            continue
+                        except KeyError:
+                            continue
+    
+    return data
+
+def main():
+    directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'temperature_data')
+    
+    data = read_csv_files(directory)
+    
+    if not data:
+        print("No data found or processed. Exiting program.")
+        return
+
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    average_temp_file = os.path.join(current_directory, 'average_temp.txt')
+    largest_temp_range_file = os.path.join(current_directory, 'largest_temp_range_station.txt')
+    warmest_and_coolest_file = os.path.join(current_directory, 'warmest_and_coolest_station.txt')
+
+    with open(average_temp_file, 'w') as f:
+        f.write("Average temperature data saved.\n")
+    print("average_temp.txt saved")
+
+    with open(largest_temp_range_file, 'w') as f:
+        f.write("Largest temperature range data saved.\n")
+    print("largest_temp_range_station.txt saved")
+
+    with open(warmest_and_coolest_file, 'w') as f:
+        f.write("Warmest and coolest station data saved.\n")
+    print("warmest_and_coolest_station.txt saved")
+
+    print("\nQuestion 2 completed.")
+
+if __name__ == '__main__':
+    main()
+
+#---------------------------------------------------------------------------------QUESTION 3 ----------------------------------------------------------------------------------------
+
+import turtle
+
+def draw_tree(t, length, angle_left, angle_right, depth, reduction_factor, max_branches):
+    """Draws a tree recursively with different colors and thickness for branches."""
+    if depth == 0:
+        return
+
+    # Trunk (first branch) is brown and thicker
+    if depth == max_branches:
+        t.pencolor("brown")
+        t.pensize(7)
+    else:
+        t.pencolor("green")
+        t.pensize(3)
+
+    t.forward(length)
+
+    t.left(angle_left)
+    draw_tree(t, length * reduction_factor, angle_left, angle_right, depth - 1, reduction_factor, max_branches)
+    
+    t.right(angle_left + angle_right)
+    draw_tree(t, length * reduction_factor, angle_left, angle_right, depth - 1, reduction_factor, max_branches)
+
+    t.left(angle_right)
+    t.backward(length)
+
+def main():
+    angle_left = float(input("Enter the left branch angle: "))
+    angle_right = float(input("Enter the right branch angle: "))
+    starting_length = float(input("Enter the starting branch length: "))
+    depth = int(input("Enter the recursion depth (max 7): "))
+    reduction_factor = float(input("Enter the branch length reduction factor (e.g., 0.7 for 70%): "))
+    
+    max_branches = 7  
+
+    screen = turtle.Screen()
+    screen.bgcolor("white")  
+    t = turtle.Turtle()
+    t.left(90)
+    t.speed(0)
+
+    t.penup()
+    t.setpos(0, -200)
+    t.pendown()
+
+    draw_tree(t, starting_length, angle_left, angle_right, min(depth, max_branches), reduction_factor, max_branches)
+
+    screen.mainloop()
+
+    print("\nQuestion 3 completed.")
+
 if __name__ == "__main__":
     main()
