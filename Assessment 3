@@ -182,9 +182,6 @@ def center_cropped_image():
 def bind_shortcuts():
     root.bind("<Control-o>", lambda event: load_image())  # Ctrl+O to load image
     root.bind("<Control-s>", lambda event: save_image())  # Ctrl+S to save image
-    root.bind("<Control-c>", lambda event: set_tool("crop"))  # Ctrl+C to activate Crop Tool
-    root.bind("<Control-p>", lambda event: set_tool("pan"))  # Ctrl+P to activate Pan Tool
-    root.bind("<Control-t>", lambda event: center_cropped_image())  # Ctrl+T to center the cropped image
 
 # GUI Layout
 title = Label(root, text="CAS/DAN GROUP 28", font=("Arial", 18, "bold"))
@@ -239,6 +236,10 @@ pan_button.grid(row=0, column=2, padx=10)
 
 center_button = Button(tool_frame, text="Center Image", command=center_cropped_image)
 center_button.grid(row=0, column=3, padx=10)
+
+# Instructions for shortcuts
+instructions = Label(root, text="Shortcuts:\nCtrl+O: Open Image\nCtrl+S: Save Image after changes", justify=LEFT, anchor="w")
+instructions.pack(side=LEFT, padx=10, pady=10)
 
 # Sliders
 slider = Scale(root, from_=10, to=200, orient=HORIZONTAL, label="Resize Image (%)", command=resize_cropped_image)
