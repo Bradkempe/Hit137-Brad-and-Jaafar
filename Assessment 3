@@ -178,6 +178,14 @@ def center_cropped_image():
     pan_offset = [0, 0]
     display_images()
 
+# Function to bind keyboard shortcuts
+def bind_shortcuts():
+    root.bind("<Control-o>", lambda event: load_image())  # Ctrl+O to load image
+    root.bind("<Control-s>", lambda event: save_image())  # Ctrl+S to save image
+    root.bind("<Control-c>", lambda event: set_tool("crop"))  # Ctrl+C to activate Crop Tool
+    root.bind("<Control-p>", lambda event: set_tool("pan"))  # Ctrl+P to activate Pan Tool
+    root.bind("<Control-t>", lambda event: center_cropped_image())  # Ctrl+T to center the cropped image
+
 # GUI Layout
 title = Label(root, text="CAS/DAN GROUP 28", font=("Arial", 18, "bold"))
 title.pack(pady=5)
@@ -243,6 +251,9 @@ brightness_slider.pack(pady=5)
 
 cropped_size_label = Label(root, text="Cropped Image Size: N/A", justify=LEFT, anchor="w")
 cropped_size_label.pack(pady=5)
+
+# Bind shortcuts
+bind_shortcuts()
 
 # Run the main loop
 root.mainloop()
