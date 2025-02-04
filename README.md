@@ -1,18 +1,25 @@
 ## Requirements
 - Python 3.x installed
 - Clone files
-
-## How to Run
-1. Open a terminal and navigate to the cloned directory.
-2. Run:
-
+- 
 ## For ASSESSMENT 3
-1. ensure your CP has Pillow and PIP.
-  If you do not know how to check this, you could just run the following code on your CP
+1. ensure your CP has PIP and Pillow.
 
-pip --version
+## To check PIP is installed - Windows
+open comand prompt (CMD)
+type:
+  pip --version
+  
+If pip is installed, you'll see the version info. If not, continue to the next step.
 
-python -c "from PIL import Image; print('Pillow is installed')"
+Install pip (if missing)
+  Download get-pip.py:
+  Go to https://bootstrap.pypa.io/get-pip.py.
+  Right-click → Save As → Save as get-pip.py.  
+Run the following in CMD:
+  python get-pip.py
 
-If that fails, refer to google for help, you may not want to be this far into a software class without knowing how to install these on your computer from a CP
+## Install Pillow
+Now that pip is ready, run:
+  pip install Pillow
 
