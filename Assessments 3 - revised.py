@@ -156,13 +156,13 @@ def finish_crop(event):
             x2, y2 = int(x2 / scale), int(y2 / scale) 
 
             if x1 < x2 and y1 < y2:  # Then check crop coordinates
-            if cropped_image is not None:
-                add_to_history()
-                redo_stack.clear()
-            cropped_image = original_image[y1:y2, x1:x2] # Cropping happens HERE
-            display_images() 
+               if cropped_image is not None:
+                   add_to_history()
+                   redo_stack.clear()
+                cropped_image = original_image[y1:y2, x1:x2] # Cropping happens HERE
+                display_images() 
 
-   crop_coords = None # Reset crop_coords after cropping         
+         crop_coords = None # Reset crop_coords after cropping         
 
 # Function to undo the last change
 def undo_action():
