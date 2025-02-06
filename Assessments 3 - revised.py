@@ -10,10 +10,10 @@ root = Tk()
 root.title("Image Editor")
 
 # Global variables
-original_image = CDU logo
-cropped_image = CDU logo
-thumbnail = CDU logo
-crop_coords = CDU logo
+original_image = None
+cropped_image = None
+thumbnail = None
+crop_coords = None
 resize_scale = 100
 brightness_scale = 0
 pan_offset = [0, 0]  # Offset for panning the cropped image
@@ -29,9 +29,9 @@ MAX_HISTORY_SIZE = 20
 def add_to_history():
     global cropped_image, history
     if cropped_image is not None:
-        if len(history) >= MAX_HISTORY_SIZE:  # Limit history size
-            history.pop(0)  # Remove the oldest state
-        history.append(cropped_image.copy())  # Add the current state
+        if len(history) >= MAX_HISTORY_SIZE: # Limit history size
+            history.pop(0) # Remove the oldest state
+        history.append(cropped_image.copy()) # Add the current state
 
 # Function to load the image
 def load_image():
@@ -54,7 +54,7 @@ def load_image():
         history.clear()  # Clear history
         redo_stack.clear()  # Clear redo stack
         add_to_history()  # Add initial state to history
-        display_images()
+        display_images() # Display the image after loading
 
 # Function to update the canvas size based on the image dimensions
 def update_canvas_size():
@@ -148,14 +148,16 @@ def finish_crop(event):
         x1, y1 = crop_coords[0], crop_coords[1]
         x2, y2 = event.x, event.y
         x1, y1, x2, y2 = min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)
+        # Ensure valid crop coordinates
+        if x1 < x2 and y1 < y2:  # Check for valid coordinates 
         if original_image is not None:
             h, w, _ = original_image.shape
             scale = min(500 / w, 500 / h)
             x1, y1 = int(x1 / scale), int(y1 / scale)
             x2, y2 = int(x2 / scale), int(y2 / scale)
             if cropped_image is not None:
-                add_to_history()  # Use the new helper function
-                redo_stack.clear()  # Clear redo stack
+                add_to_history()
+                redo_stack.clear()
             cropped_image = original_image[y1:y2, x1:x2]
             display_images()
 
@@ -206,7 +208,7 @@ def save_image():
         adjusted = adjust_brightness(resized, brightness_scale)  # Apply brightness adjustment
         filepath = filedialog.asksaveasfilename(defaultextension=".jpg", filetypes=[("JPEG", "*.jpg"), ("PNG", "*.png")])
         if filepath:
-            cv2.imwrite(filepath, cv2.cvtColor(adjusted, cv2.COLOR_RGB2BGR))  # Save in BGR format
+            cv2.imwrite(filepath, cv2.cvtColor(adjusted, cv2.COLOR_RGB2BGR))  # Convert to BGR format before saving
 
 # Function to center the cropped image
 def center_cropped_image():
