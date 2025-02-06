@@ -144,7 +144,7 @@ def show_crop(event):
 # Function to finalize cropping
 def finish_crop(event):
     global cropped_image, redo_stack
-    if current_tool == "crop":
+    if current_tool == "crop" and crop_coords is not None:  # Check if crop_coords is initialized
         x1, y1 = crop_coords[0], crop_coords[1]
         x2, y2 = event.x, event.y
         x1, y1, x2, y2 = min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)
@@ -158,8 +158,9 @@ def finish_crop(event):
             if cropped_image is not None:
                 add_to_history()
                 redo_stack.clear()
-            cropped_image = original_image[y1:y2, x1:x2] # Cropping happens HERE
-            display_images()
+            cropped_image = original_image[y1:y2, x1:x2] 
+            display_images() 
+   crop_coords = None # Reset crop_coords after cropping         
 
 # Function to undo the last change
 def undo_action():
@@ -177,7 +178,7 @@ def redo_action():
     global cropped_image, history, redo_stack
     if redo_stack:
       history.append(cropped_image.copy())  
-        cropped_image = redo_stack.pop()  # Correct indentation
+        cropped_image = redo_stack.pop() 
         display_images()
  
 # Function to start panning
