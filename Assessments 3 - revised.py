@@ -40,7 +40,7 @@ def load_image():
     if filepath:
         original_image = cv2.imread(filepath)
         original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)  # Convert to RGB
-        cropped_image = original_image.copy()  # Initialize cropped_image to None initially
+        cropped_image = None  # Initialize cropped_image to None
         crop_coords = None  # Reset crop coordinates
         resize_scale = 100  # Reset resizing scale
         brightness_scale = 0  # Reset brightness scale
@@ -113,16 +113,16 @@ def display_images():
 
 # Function to resize the cropped image dynamically
 def resize_cropped_image(scale):
-    global resize_scale, redo_stack , cropped_image  # Make sure cropped_image is global
+    global resize_scale, redo_stack , cropped_image  # Make cropped_image global
     if cropped_image is not None: # Only add to history if cropped_image exists
-        add_to_history()  # Use the new helper function
-        redo_stack.clear()  # Clear redo stack
+        add_to_history()  
+        redo_stack.clear()
     resize_scale = int(scale)
     display_images()
 
 # Function to adjust brightness dynamically
 def adjust_brightness_slider(value):
-    global brightness_scale, redo_stack
+    global brightness_scale, redo_stack, cropped_image  # Make cropped_image global
     if cropped_image is not None:
         add_to_history()  # Use the new helper function
         redo_stack.clear()  # Clear redo stack
@@ -148,8 +148,8 @@ def finish_crop(event):
         x1, y1 = crop_coords[0], crop_coords[1]
         x2, y2 = event.x, event.y
         x1, y1, x2, y2 = min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)
-        # Ensure valid crop coordinates
-        if x1 < x2 and y1 < y2:  # Check for valid coordinates 
+        
+        if x1 < x2 and y1 < y2:  # Correct placement of the if condition 
         if original_image is not None:
             h, w, _ = original_image.shape
             scale = min(500 / w, 500 / h)
@@ -165,10 +165,10 @@ def finish_crop(event):
 def undo_action():
     global cropped_image, history, redo_stack
     if history:
-        redo_stack.append(cropped_image.copy()) # Store current state in redo stack
-        cropped_image = history.pop() # Retrieve previous state from history
+        redo_stack.append(cropped_image.copy())
+        cropped_image = history.pop() 
         display_images() 
-        elif original_image is not None and not history: # handles the initial state
+        if original_image is not None and not history: # Correct placement of elif
         cropped_image = None
         display_images()
 
@@ -176,8 +176,8 @@ def undo_action():
 def redo_action():
     global cropped_image, history, redo_stack
     if redo_stack:
-      history.append(cropped_image.copy())  # Store current state in history
-        cropped_image = redo_stack.pop()  # Retrieve state from redo stack
+      history.append(cropped_image.copy())  
+        cropped_image = redo_stack.pop()  # Correct indentation
         display_images()
  
 # Function to start panning
