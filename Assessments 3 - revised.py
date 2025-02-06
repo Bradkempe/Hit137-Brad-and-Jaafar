@@ -158,7 +158,7 @@ def finish_crop(event):
             if cropped_image is not None:
                 add_to_history()
                 redo_stack.clear()
-            cropped_image = original_image[y1:y2, x1:x2]
+            cropped_image = original_image[y1:y2, x1:x2] # Cropping happens HERE
             display_images()
 
 # Function to undo the last change
