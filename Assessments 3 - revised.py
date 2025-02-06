@@ -40,7 +40,7 @@ def load_image():
     if filepath:
         original_image = cv2.imread(filepath)
         original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)  # Convert to RGB
-        cropped_image = original_image.copy()  # Initialize cropped_image as a copy of original_image
+        cropped_image = original_image.copy()  # Initialize cropped_image to None initially
         crop_coords = None  # Reset crop coordinates
         resize_scale = 100  # Reset resizing scale
         brightness_scale = 0  # Reset brightness scale
@@ -113,8 +113,8 @@ def display_images():
 
 # Function to resize the cropped image dynamically
 def resize_cropped_image(scale):
-    global resize_scale, redo_stack
-    if cropped_image is not None:
+    global resize_scale, redo_stack , cropped_image  # Make sure cropped_image is global
+    if cropped_image is not None: # Only add to history if cropped_image exists
         add_to_history()  # Use the new helper function
         redo_stack.clear()  # Clear redo stack
     resize_scale = int(scale)
@@ -165,18 +165,21 @@ def finish_crop(event):
 def undo_action():
     global cropped_image, history, redo_stack
     if history:
-        redo_stack.append(cropped_image.copy())
-        cropped_image = history.pop()
+        redo_stack.append(cropped_image.copy()) # Store current state in redo stack
+        cropped_image = history.pop() # Retrieve previous state from history
+        display_images() 
+        elif original_image is not None and not history: # handles the initial state
+        cropped_image = None
         display_images()
 
 # Function to redo the last undone change
 def redo_action():
     global cropped_image, history, redo_stack
     if redo_stack:
-        add_to_history()  # Add the current state before redoing
-        cropped_image = redo_stack.pop()
+      history.append(cropped_image.copy())  # Store current state in history
+        cropped_image = redo_stack.pop()  # Retrieve state from redo stack
         display_images()
-
+ 
 # Function to start panning
 def start_pan(event):
     global start_pan_coords
