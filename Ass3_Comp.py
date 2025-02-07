@@ -40,9 +40,8 @@ def load_image():
     if filepath:
         original_image = cv2.imread(filepath)
         original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)  # Convert to RGB
-        cropped_image = original_image.copy()  # Initialize cropped_image as a copy of original_image
         crop_coords = None  # Reset crop coordinates
-        resize_scale = 100  # Reset resizing scale
+        resize_scale = 20  # Reset resizing scale
         brightness_scale = 0  # Reset brightness scale
         pan_offset = [0, 0]  # Reset panning
         slider.set(100)  # Reset slider position
@@ -63,6 +62,7 @@ def update_canvas_size():
         scale = min(500 / w, 500 / h)
         new_w, new_h = int(w * scale), int(h * scale)
         canvas_original.config(width=new_w, height=new_h)
+        # canvas_cropped.config(width=new_w, height=new_h)
 
 # Function to adjust brightness
 def adjust_brightness(image, value):
