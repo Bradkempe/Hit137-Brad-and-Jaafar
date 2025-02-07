@@ -41,7 +41,7 @@ def load_image():
         original_image = cv2.imread(filepath)
         original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)  # Convert to RGB
         crop_coords = None  # Reset crop coordinates
-        resize_scale = 20  # Reset resizing scale
+        resize_scale = 100  # Reset resizing scale
         brightness_scale = 0  # Reset brightness scale
         pan_offset = [0, 0]  # Reset panning
         slider.set(100)  # Reset slider position
