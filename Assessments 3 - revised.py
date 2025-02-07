@@ -159,10 +159,9 @@ def finish_crop(event):
                if cropped_image is not None:
                    add_to_history()
                    redo_stack.clear()
-                cropped_image = original_image[y1:y2, x1:x2] # Cropping happens HERE
-                display_images() 
-
-         crop_coords = None # Reset crop_coords after cropping         
+        cropped_image = original_image[y1:y2, x1:x2] # Cropping happens HERE
+    display_images() 
+    crop_coords = None # Reset crop_coords after cropping         
 
 # Function to undo the last change
 def undo_action():
@@ -172,7 +171,7 @@ def undo_action():
         cropped_image = history.pop() 
         display_images() 
         if original_image is not None and not history: # Correct placement of elif
-        cropped_image = None
+         cropped_image = None
         display_images()
 
 # Function to redo the last undone change
@@ -180,8 +179,8 @@ def redo_action():
     global cropped_image, history, redo_stack
     if redo_stack:
       history.append(cropped_image.copy())  
-        cropped_image = redo_stack.pop() 
-        display_images()
+    cropped_image = redo_stack.pop() 
+    display_images()
  
 # Function to start panning
 def start_pan(event):
